@@ -15,7 +15,7 @@ from pydantic import (
 )
 
 import qcfinancial as qcf
-import wrappers as qcw
+from . import wrappers as qcw
 
 
 class MarketDataSource(ABC):
@@ -275,55 +275,55 @@ class FxRateIndexHandler(BaseModel):
             return self.fx_rate_index_values[fx_rate_index_code]
 
 
-class AmountToClp(BaseModel):
-    process_date: date
-    market_data: MarketDataSource
-    config: dict[str, str]
-    """
-    Permite convertir un monto en una moneda a un monto en CLP.
+# class AmountToClp(BaseModel):
+#     process_date: date
+#     market_data: MarketDataSource
+#     config: dict[str, str]
+#     """
+#     Permite convertir un monto en una moneda a un monto en CLP.
     
-    Parameters
-    ----------
-    process_date: date
-        Fecha a la cual se realiza la conversión.
+#     Parameters
+#     ----------
+#     process_date: date
+#         Fecha a la cual se realiza la conversión.
     
-    market_data: MarketDataSource
-        Fuente de los datos de mercado
+#     market_data: MarketDataSource
+#         Fuente de los datos de mercado
     
-    config: dict[str, str]
-        Dict cuyos `keys` son los nombres de las monedas y cuyos `values` son los nombres de los índices de tipo de 
-        cambio que se deben utilizar para cada moneda. Todos deben ser del tipo MXXCLP (la moneda fuerte debe ser la 
-        moneda distinta de CLP).
+#     config: dict[str, str]
+#         Dict cuyos `keys` son los nombres de las monedas y cuyos `values` son los nombres de los índices de tipo de 
+#         cambio que se deben utilizar para cada moneda. Todos deben ser del tipo MXXCLP (la moneda fuerte debe ser la 
+#         moneda distinta de CLP).
     
-    """
+#     """
 
-    def __call__(self, amount: float, currency: qcw.Currency):
-        """
-        Transforma un monto en cualquier moneda a un monto en CLP. Para la conversión utilizará el tipo de cambio
-        individualizado en config a `process_date`.
+#     def __call__(self, amount: float, currency: qcw.Currency):
+#         """
+#         Transforma un monto en cualquier moneda a un monto en CLP. Para la conversión utilizará el tipo de cambio
+#         individualizado en config a `process_date`.
 
-        Parameters
-        ----------
-        amount: float
-            Monto a convertir.
+#         Parameters
+#         ----------
+#         amount: float
+#             Monto a convertir.
 
-        currency: qcw.Currency
-            Moneda del monto a convertir.
+#         currency: qcw.Currency
+#             Moneda del monto a convertir.
 
 
-        Returns
-        -------
-        float
-            El resultado de la conversión.
+#         Returns
+#         -------
+#         float
+#             El resultado de la conversión.
 
-        """
-        index_code = self.config[currency.value]
-        index_value = self.market_data.get_index_value_for_date(
-            self.process_date,
-            index_code,
-            )
+#         """
+#         index_code = self.config[currency.value]
+#         index_value = self.market_data.get_index_value_for_date(
+#             self.process_date,
+#             index_code,
+#             )
 
-        return amount * index_value
+#         return amount * index_value
 
 
 def build_zero_coupon_curve(
